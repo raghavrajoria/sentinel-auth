@@ -1,0 +1,29 @@
+[
+  {
+    "id": "r1",
+    "name": "High Amount",
+    "field": "amount",
+    "operator": "gt",
+    "value": 5000,
+    "action": "BLOCK",
+    "add_risk": 40
+  },
+  {
+    "id": "r2",
+    "name": "Medium Amount",
+    "field": "amount",
+    "operator": "gt",
+    "value": 1000,
+    "action": "REVIEW",
+    "add_risk": 20
+  },
+  {
+    "id": "r3",
+    "name": "Suspicious Round Amount",
+    "field": "amount",
+    "operator": "eq",
+    "value": 9999,
+    "action": "BLOCK",
+    "add_risk": 30
+  }
+]
