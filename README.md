@@ -31,7 +31,7 @@ graph TD
 
 ```
 
-*[📸 ADD SCREENSHOT HERE: A high-level system architecture diagram if you drew one externally, or you can just leave the Mermaid diagram above!]*
+
 
 ## 🚀 Key Features & Impact
 
@@ -51,13 +51,13 @@ graph TD
 
 ## 📊 Performance & Observability
 
-*[📸 ADD SCREENSHOT HERE: Grafana Dashboard showing RPS, Latency (p99/p95), Block/Allow rates, and Circuit Breaker states]*
+![Grafana Dashboard](assets/grafana.png)
 
 *[📸 ADD SCREENSHOT HERE: k6 Load Test Terminal Output showing 530 RPS, 95k+ requests, and 0% error rate]*
 
 ## 🚨 Real-Time Alerting
 
-*[📸 ADD SCREENSHOT HERE: The Live WebSocket Dashboard `dashboard.html` showing BLOCK alerts appearing in real-time]*
+![Live Alerts Dashboard](assets/dashboard.png)
 
 ## 🧠 Transaction Evaluation Flow
 
