@@ -51,13 +51,15 @@ graph TD
 
 ## 📊 Performance & Observability
 
-![Grafana Dashboard](assets/grafana.png)
+![ML Startup](assets/ml-startup.png)
+
+![k6 Load Test](assets/k6test.png)
 
 
 
 ## 🚨 Real-Time Alerting
 
-![Live Alerts Dashboard](assets/dashboard.png)
+![Live Alerts Dashboard](assets/dashboardhtml.png)
 
 ## 🧠 Transaction Evaluation Flow
 
@@ -150,6 +152,8 @@ Invoke-WebRequest -Uri "http://localhost:8080/v1/check" `
 Invoke-WebRequest -Uri "http://localhost:8081/v1/explanation/tx_002" -UseBasicParsing
 
 ```
+
+![Explanation API Response](assets/explanation-api.png)
 
 
 
