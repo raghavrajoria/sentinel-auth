@@ -53,7 +53,7 @@ graph TD
 
 ![Grafana Dashboard](assets/grafana.png)
 
-*[📸 ADD SCREENSHOT HERE: k6 Load Test Terminal Output showing 530 RPS, 95k+ requests, and 0% error rate]*
+
 
 ## 🚨 Real-Time Alerting
 
