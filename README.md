@@ -242,12 +242,4 @@ curl -X POST http://localhost:8080/v1/check \
 
 ![Live Alerts Dashboard](assets/dashboardhtml.png)
 
----
 
-## 🎯 Resume Bullets
-
-- Architected microservices fraud detection system processing **530+ RPS at p99 185ms** using Java 21 Virtual Threads and async Kafka publishing.
-- Trained XGBoost on **590k IEEE-CIS transactions achieving AUC 0.903**, served via Python gRPC with 500ms SLA and Resilience4j circuit breaker preventing cascade failures.
-- Implemented **behavioral baseline** tracking avg amount, device trust, and hour patterns per user in Redis — detecting anomalous transactions without rule changes.
-- Built **shadow mode** running dual models simultaneously, logging disagreements to Redis — enabling safe model promotion without production risk.
-- Designed **human-in-the-loop review dashboard** with analyst approve/reject workflow, Kafka audit trail, and model drift detection alerting on distribution shifts.
