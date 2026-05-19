@@ -11,7 +11,10 @@ CREATE TABLE IF NOT EXISTS decisions (
     shadow_decision VARCHAR(16),
     latency_ms INTEGER,
     created_at TIMESTAMPTZ DEFAULT NOW()
+
 );
+ALTER TABLE decisions ADD COLUMN IF NOT EXISTS shadow_risk_score SMALLINT DEFAULT -1;
+ALTER TABLE decisions ADD COLUMN IF NOT EXISTS shadow_decision VARCHAR(16) DEFAULT 'UNAVAILABLE';
 
 CREATE INDEX idx_decisions_user_id ON decisions(user_id);
 CREATE INDEX idx_decisions_created_at ON decisions(created_at);

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel-Auth | Review Queue</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #0f1117;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #1a1d27;
+            border-bottom: 1px solid #2d3748;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        header h1 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .badge {
+            background: #f59e0b;
+            color: #000;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 32px auto;
+            padding: 0 24px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: #1a1d27;
+            border: 1px solid #2d3748;
+            border-radius: 10px;
+            padding: 16px 24px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .stat-card .label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .controls h2 {
+            font-size: 15px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .refresh-btn {
+            background: #2d3748;
+            color: #e2e8f0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .refresh-btn:hover { background: #374151; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1a1d27;
+            border: 1px solid #2d3748;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #111827;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        td {
+            padding: 14px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid #1e2533;
+            vertical-align: middle;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #1e2533; }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .risk-high   { background: #7f1d1d; color: #fca5a5; }
+        .risk-medium { background: #78350f; color: #fcd34d; }
+        .risk-low    { background: #14532d; color: #86efac; }
+
+        .action-btns { display: flex; gap: 8px; }
+
+        .btn-approve {
+            background: #15803d;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-approve:hover { background: #166534; }
+
+        .btn-reject {
+            background: #991b1b;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-reject:hover { background: #7f1d1d; }
+
+        .btn-approve:disabled,
+        .btn-reject:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .decided { color: #64748b; font-style: italic; font-size: 12px; }
+
+        .empty {
+            text-align: center;
+            padding: 48px;
+            color: #4a5568;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: none;
+            z-index: 999;
+        }
+
+        .toast.show { display: block; }
+        .toast.success { border-color: #15803d; color: #86efac; }
+        .toast.error   { border-color: #991b1b; color: #fca5a5; }
+
+        .analyst-input {
+            background: #111827;
+            border: 1px solid #2d3748;
+            color: #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            width: 160px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Sentinel-Auth</h1>
+    <span class="badge">Review Queue</span>
+</header>
+
+<div class="container">
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="number" id="stat-pending">—</div>
+            <div class="label">Pending Review</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" id="stat-approved">—</div>
+            <div class="label">Approved Today</div>
+        </div>
+        <div class="stat-card">
+            <div class="number" id="stat-rejected">—</div>
+            <div class="label">Rejected Today</div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <h2>Pending transactions requiring analyst decision</h2>
+        <div style="display:flex;gap:10px;align-items:center;">
+            <input class="analyst-input" id="analyst-name" placeholder="Analyst name" value="analyst_1" />
+            <button class="refresh-btn" onclick="loadQueue()">↻ Refresh</button>
+        </div>
+    </div>
+
+    <table id="queue-table">
+        <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>User ID</th>
+            <th>Risk Score</th>
+            <th>ML Score</th>
+            <th>Rules Fired</th>
+            <th>Created At</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="queue-body">
+        <tr><td colspan="7" class="empty">Loading...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const AUDIT_URL = 'http://localhost:8081';
+
+    async function loadQueue() {
+        try {
+            const res = await fetch(`${AUDIT_URL}/v1/review/queue`);
+            const data = await res.json();
+            renderQueue(data);
+            document.getElementById('stat-pending').textContent = data.length;
+        } catch (e) {
+            document.getElementById('queue-body').innerHTML =
+                '<tr><td colspan="7" class="empty">Failed to load queue — is audit-service running?</td></tr>';
+        }
+    }
+
+    function renderQueue(items) {
+        const tbody = document.getElementById('queue-body');
+        if (items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="empty">No pending reviews</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = items.map(item => {
+            const risk = item.risk_score;
+            const riskClass = risk >= 70 ? 'risk-high' : risk >= 50 ? 'risk-medium' : 'risk-low';
+            const rules = JSON.parse(item.rules_fired || '[]').join(', ') || '—';
+            const created = new Date(item.created_at).toLocaleString();
+
+            return `
+                <tr id="row-${item.tx_id}">
+                    <td style="font-family:monospace;font-size:12px">${item.tx_id}</td>
+                    <td>${item.user_id}</td>
+                    <td><span class="risk-badge ${riskClass}">${risk}</span></td>
+                    <td>${item.ml_risk_score}</td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${rules}">${rules}</td>
+                    <td style="color:#94a3b8;font-size:12px">${created}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-approve" onclick="decide('${item.tx_id}', 'APPROVE')">Approve</button>
+                            <button class="btn-reject"  onclick="decide('${item.tx_id}', 'REJECT')">Reject</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    async function decide(txId, action) {
+        const analyst = document.getElementById('analyst-name').value || 'unknown';
+        const row = document.getElementById(`row-${txId}`);
+        const btns = row.querySelectorAll('button');
+        btns.forEach(b => b.disabled = true);
+
+        try {
+            const res = await fetch(`${AUDIT_URL}/v1/review/${txId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, analyst })
+            });
+
+            if (res.ok) {
+                const lastCell = row.querySelector('td:last-child');
+                lastCell.innerHTML = `<span class="decided">${action === 'APPROVE' ? '✓ Approved' : '✗ Rejected'} by ${analyst}</span>`;
+                showToast(`${txId} ${action === 'APPROVE' ? 'approved' : 'rejected'}`, 'success');
+            } else {
+                btns.forEach(b => b.disabled = false);
+                showToast('Action failed', 'error');
+            }
+        } catch (e) {
+            btns.forEach(b => b.disabled = false);
+            showToast('Network error', 'error');
+        }
+    }
+
+    function showToast(msg, type) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = `toast show ${type}`;
+        setTimeout(() => t.className = 'toast', 2500);
+    }
+
+    // load on start + auto-refresh every 15s
+    loadQueue();
+    setInterval(loadQueue, 15000);
+</script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+name: Sentinel-Auth CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  decision-engine:
+    name: Build decision-engine
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build decision-engine
+        working-directory: decision-engine
+        run: mvn clean package -DskipTests --no-transfer-progress
+
+  audit-service:
+    name: Build audit-service
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build audit-service
+        working-directory: audit-service
+        run: mvn clean package -DskipTests --no-transfer-progress
+
+  notifier:
+    name: Build notifier
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build notifier
+        working-directory: notifier
+        run: mvn clean package -DskipTests --no-transfer-progress
+
+  sentry-ml:
+    name: Build sentry-ml
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        working-directory: sentry-ml
+        run: |
+          python -m pip install --upgrade pip
+          pip install grpcio grpcio-tools xgboost scikit-learn numpy
+
+      - name: Verify ML server imports
+        working-directory: sentry-ml/app
+        run: python -c "import server; print('ML service imports OK')"
